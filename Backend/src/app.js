@@ -6,7 +6,7 @@ const tweetRouter = require("../src/routes/tweet.routes")
 app.use(express.json())
 app.use(cookieParser())
 
-app.use("/api/auth",authRouter)   //prefix for ath route
-app.use("/api/tweets",tweetRouter)
+app.use("/api/auth",authRouter)   //prefix for auth route
+app.use("/api/tweets",tweetRouter) //prfix for tweets route
 
 module.exports = app
