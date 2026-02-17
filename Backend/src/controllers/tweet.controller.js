@@ -18,25 +18,12 @@ async function createTweetController(req, res) {             //post method
 
         })
 
-        const token = req.cookies.token
-        if (!token) {
-            return res.status(401).json({
-                message: "token not provided! unauthorized access"
-            })
-        }
-        let decode = null
-        try {
-            decode = jwt.verify(token, process.env.JWT_SECRET)
-        } catch (err) {
-            return res.status(401).json({
-                message: "token invalid ! unauthorized access"
-            })
-        }
+       
 
         const tweet = await tweetModel.create({
             content: req.body.content,
             imgUrl: result.url,
-            user: decode.id
+            user: req.user.id
         })
 
         res.status(201).json({
@@ -102,22 +89,9 @@ async function getTweetByIdController(req, res) {            //get By id method
 async function deleteTweetController(req, res) {             //delete method
     try {
 
-        const token = req.cookies.token
-        if (!token) {
-            return res.status(401).json({
-                message: "Token not Found! Unauthorized Access"
-            })
-        }
-
-        let decode;
-        try {
-            decode = jwt.verify(token, process.env.JWT_SECRET)
-        } catch (err) {
-            return res.status(401).json({
-                message: "Invalid Token! Unauthorized Access"
-            })
-        }
-        const userId = decode.id
+        
+       
+        const userId = req.user.id
         const tweetId = req.params.tweetId
         const tweet = await tweetModel.findById(tweetId)
         if (!tweet) {
@@ -146,22 +120,8 @@ async function deleteTweetController(req, res) {             //delete method
 }
 async function likeTweetController(req,res){               // like method
 try{
- const token = req.cookies.token
-    if(!token){
-        return res.status(401).json({
-            message:"token not found! Unauthorized Access",
-        })
-    }
-    let decode;
-    try{
-        decode  = jwt.verify(token,process.env.JWT_SECRET)
-    } 
-    catch(err){
-        return res.status(401).json({
-            message:"Invalid Token! Unauthorized access"
-        })
-    }
-    const userId = decode.id
+ 
+    const userId = req.user.id
     const tweetId = req.params.tweetId
     const tweet = await tweetModel.findById(tweetId)
     if(!tweet){
@@ -196,23 +156,9 @@ catch(err){
 
 async function unLikeTweetController(req,res){           // unlike method
    try{
-     const token = req.cookies.token
-    if(!token){
-        return res.status(401).json({
-            message:"Token not found"
-        })
-    }
-    let decode ;
-    try{
-        decode = jwt.verify(token,process.env.JWT_SECRET)
-    }
-    catch(err){
-        return res.status(401).json({
-            message:"invalid token! Unauthorized Access"
-        })
-    }
+   
 
-const userId = decode.id
+const userId = req.user.id
 const tweetId = req.params.tweetId
 const tweet = await tweetModel.findById(tweetId)
 if(!tweet){
