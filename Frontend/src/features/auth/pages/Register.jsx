@@ -1,66 +1,51 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+
 const Register = () => {
     const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [loading, setLoading] = useState(false)
- 
+    const [email, setEmail] = useState("")
+    const { loading, user, registerHandler } = useAuth()
+    const navigate = useNavigate()
 
-    async function registerSubmitHandler(e) {
+
+    async function submitHandler(e) {
         e.preventDefault()
+        await registerHandler(username, email, password)
 
-       setLoading(true)
-
-        axios.post("http://localhost:3000/api/auth/register", {
-            username,
-            email,
-            password
-        }, { withCredentials: true })
-            .then((res) => {
-                console.log(res.data)
-                setUsername("")
-                setEmail("")
-                setPassword("")
-            })
-            .catch((err) => {
-                console.log(err.res.message)
-            })
-           .finally(()=>{
-            setLoading(false)
-           })
-
+        navigate("/")
     }
     return (
         <main>
             <div className="form-container">
                 <h1>Register</h1>
-                <form onSubmit={registerSubmitHandler}>
+                <form onSubmit={submitHandler}>
                     <input
                         type="text"
                         name="username"
-                        placeholder='Username'
+                        placeholder='Enter username'
+                        onChange={(e) => { setUsername(e.target.value) }}
                         value={username}
-                        onChange={e => { setUsername(e.target.value) }}
                     />
                     <input
                         type="email"
                         name="email"
-                        placeholder='Email'
-                        value={email}
+                        placeholder='Enter Email'
                         onChange={(e) => { setEmail(e.target.value) }}
+                        value={email}
                     />
                     <input
                         type="password"
                         name="password"
-                        placeholder='Password'
-                        value={password}
+                        placeholder='Enter Password'
                         onChange={(e) => { setPassword(e.target.value) }}
+                        value={password}
                     />
-                    <button disabled={loading}>{loading?"Creating account...":"Register"}</button>
+                    <button>Register</button>
                 </form>
-                <p>Already have an account ? <Link className='toggle' to={'/login'} >Login</Link> </p>
+                <p>Already have an Account ? <Link to={"/login"}>Login</Link> </p>
             </div>
         </main>
     )

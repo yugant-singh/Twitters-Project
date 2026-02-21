@@ -1,61 +1,47 @@
-import React, { useState } from 'react'
-import '../style/form.scss'
+import React, { use, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
-
-
+import {useNavigate} from 'react-router-dom'
+import '../style/form.scss'
+import {useAuth} from '../hooks/useAuth'
 const Login = () => {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [lodaing, setLodaing] = useState(false)
-    async function loginSubmitHandler(e) {
+const navigate = useNavigate()
+  const{loginHandler,loading,user} = useAuth()
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+ async function submitHandler(e){
+e.preventDefault()
+await loginHandler(username,password)
+  navigate("/")
 
-        e.preventDefault()
-        setLodaing(true)
+ }
 
-        axios.post("http://localhost:3000/api/auth/login",{
-            username,
-            password
-        },{withCredentials:true})
-        .then((res)=>{
-            console.log(res.data)
-             setUsername("")
-            setPassword("")
-        })
-        .catch((err)=>{
-            console.log(err) 
-        })
-        .finally(()=>{
-            setLodaing(false)
-        })
-    }
-    return (
-        <div>
-            <main>
-                <div className="form-container">
-                    <h1>Login</h1>
-                    <form onSubmit={loginSubmitHandler}>
-                        <input
-                            type="text"
-                            name="username"
-                            placeholder='Username'
-                            value={username}
-                            onChange={(e) => { setUsername(e.target.value) }}
-                        />
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder='Password'
-                            value={password}
-                            onChange={(e) => { setPassword(e.target.value) }}
-                        />
-                        <button disabled={lodaing} >{lodaing?"Loading...":"Login"}</button>
-                    </form>
-                    <p>Don't have an account ? <Link className='toggle' to={'/register'} >Register</Link> </p>
-                </div>
-            </main>
-        </div>
-    )
+  return (
+    <main>
+      <div className="form-container">
+        <h1>Login</h1>
+        <form  onSubmit={submitHandler}>
+          <input
+            type="text"
+            name="username"
+            placeholder='Enter username'
+            onChange={(e)=>{setUsername(e.target.value)}}
+            value={username}
+            
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder='Enter Password'
+            onChange={(e)=>{setPassword(e.target.value)}}
+            value={password}
+          />
+          <button>Login</button>
+        </form>
+        <p>Don't have an Account ? <Link to={"/register"}>Create one</Link> </p>
+      </div>
+    </main>
+  )
 }
 
 export default Login
